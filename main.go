@@ -25,6 +25,13 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `<h1>Contact Page</h1><p>To get in touch, email me at <a href="mailto:artyomsonyx@gmail.com">`)
 }
 
+func galleryHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	method := r.Method
+	fmt.Println("galleryHandler executed with method", method, r.URL.Path)
+	fmt.Fprint(w, `<h1>Gallery</h1>`)
+}
+
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Status code 404: not fount")
 	http.Error(w, "Page not found", http.StatusNotFound)
@@ -40,6 +47,8 @@ func pathHandler(w http.ResponseWriter, r *http.Request) {
 		loginHandler(w, r)
 	case "/contact":
 		contactHandler(w, r)
+	case "/gallery":
+		galleryHandler(w, r)
 	default:
 		notFoundHandler(w, r)
 	}
@@ -64,6 +73,8 @@ func (router Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		contactHandler(w, r)
 	case "/faq":
 		faqHandler(w, r)
+	case "/gallery":
+		galleryHandler(w, r)
 	default:
 		notFoundHandler(w, r)
 	}
