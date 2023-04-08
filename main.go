@@ -2,56 +2,39 @@ package main
 
 import (
 	"fmt"
-	"html/template"
-	"log"
 	"net/http"
 	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/tombracho/ch-lenslocked/controllers"
+	"github.com/tombracho/ch-lenslocked/views"
 )
-
-func executeTemplate(w http.ResponseWriter, tplPath string) {
-	tpl, err := template.ParseFiles(tplPath)
-	if err != nil {
-		log.Printf("parsing template: %v", err)
-		http.Error(w, "There was an error parthing the template", http.StatusInternalServerError)
-		return
-	}
-	err = tpl.Execute(w, nil)
-	if err != nil {
-		log.Printf("executing template: %v", err)
-		http.Error(w, "There was an error executing the template", http.StatusInternalServerError)
-		return
-	}
-}
-
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	tplPath := filepath.Join("templates", "home.gohtml")
-	executeTemplate(w, tplPath)
-}
-
-func contactHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	tplPath := filepath.Join("templates", "contact.gohtml")
-	executeTemplate(w, tplPath)
-}
-
-func faqHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	tplPath := filepath.Join("templates", "faq.gohtml")
-	executeTemplate(w, tplPath)
-}
 
 func main() {
 	r := chi.NewRouter()
-	r.Get("/", homeHandler)
-	r.Get("/contact", contactHandler)
-	r.Get("/faq", faqHandler)
+
+	//homeTpl, err := views.Parse(filepath.Join("templates", "home.gohtml"))
+	//homeTpl = views.Must(homeTpl, err)
+
+	//contactTpl, err := views.Parse(filepath.Join("templates", "contact.gohtml"))
+	//contactTpl = views.Must(contactTpl, err)
+
+	//faqTpl, err := views.Parse(filepath.Join("templates", "faq.gohtml"))
+	//faqTpl = views.Must(faqTpl, err)
+
+	//r.Method(http.MethodGet, "/", controllers.Static{Template: homeTpl})
+	//r.Method(http.MethodGet, "/contact", controllers.Static{Template: contactTpl})
+	//r.Method(http.MethodGet, "/faq", controllers.Static{Template: faqTpl})
+
+	r.Get("/", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "home.gohtml")))))
+	r.Get("/faq", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))))
+	r.Get("/contact", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "contact.gohtml")))))
+	r.Get("/login", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "login.gohtml")))))
+
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Error 404. Page not found")
-		http.Error(w, "Pahe not found", http.StatusNotFound)
+		http.Error(w, "Page not found", http.StatusNotFound)
 	})
+
 	fmt.Println("Starting the server on :3000...")
 	http.ListenAndServe(":3000", r)
 }

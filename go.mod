@@ -1,4 +1,4 @@
-module github.com/tombracho/lenslocked
+module github.com/tombracho/ch-lenslocked
 
 go 1.18
 
