@@ -1,0 +1,43 @@
+{{template "header" .}}
+    <div class="max-w-md mx-auto mt-8 bg-white p-8 rounded shadow-md">
+        <h1 class="text-2xl font-bold mb-6">Start sharing your photos!</h1>
+	<form action="/signup" method="post">
+	    <label for="username" class="block mb-2">Username:</label>
+	    <input 
+	        type="text" 
+	        id="username" 
+	        name="username" 
+	        required 
+		autofocus
+	        class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+	    >
+	    <br>
+	    <label for="email" class="block mb-2">Email:</label>
+	    <input 
+	        type="email" 
+	        id="email" 
+	        name="email" 
+		autocomplete="email"
+	        required 
+	        class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+		value="{{.Email}}"
+	    >
+	    <br>
+	    <label for="password" class="block mb-2">Password:</label>
+	    <input 
+	        type="password" 
+	        id="password" 
+	        name="password" 
+	        required 
+	        class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+	    >
+	    <br>
+	    <input 
+	        type="submit" 
+	        value="Sign Up" 
+	        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
+	    >
+	</form>
+        <p class="mt-4">Already have an account? <a href="/signin" class="text-blue-500 hover:text-blue-700">Sign in</a></p>
+    </div>
+{{template "footer" .}}
