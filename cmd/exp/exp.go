@@ -1,38 +1,19 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"log"
 )
 
-func Connect() error {
-	return errors.New("connection faild")
-}
-
-func CreateUser() error {
-	err := Connect()
-	if err != nil {
-		return fmt.Errorf("create user: %w", err)
-	}
-	return nil
-}
-
-func CreaeteOrg() error {
-	err := CreateUser()
-	if err != nil {
-		return fmt.Errorf("create org: %w", err)
-	}
-	return nil
-}
-
 func main() {
-	err := CreateUser()
-	if err != nil {
-		log.Println(err)
+	fib := []int{1, 2, 3, 4, 5, 6}
+	Demo(fib...)
+	Demo(1)
+	Demo(1, 2, 3)
+}
+
+func Demo(numbers ...int) {
+	for _, number := range numbers {
+		fmt.Print(number, " ")
 	}
-	err = CreaeteOrg()
-	if err != nil {
-		log.Println(err)
-	}
+	fmt.Println()
 }

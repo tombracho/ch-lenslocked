@@ -3,33 +3,20 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/tombracho/ch-lenslocked/controllers"
+	"github.com/tombracho/ch-lenslocked/templates"
 	"github.com/tombracho/ch-lenslocked/views"
 )
 
 func main() {
 	r := chi.NewRouter()
 
-	//homeTpl, err := views.Parse(filepath.Join("templates", "home.gohtml"))
-	//homeTpl = views.Must(homeTpl, err)
-
-	//contactTpl, err := views.Parse(filepath.Join("templates", "contact.gohtml"))
-	//contactTpl = views.Must(contactTpl, err)
-
-	//faqTpl, err := views.Parse(filepath.Join("templates", "faq.gohtml"))
-	//faqTpl = views.Must(faqTpl, err)
-
-	//r.Method(http.MethodGet, "/", controllers.Static{Template: homeTpl})
-	//r.Method(http.MethodGet, "/contact", controllers.Static{Template: contactTpl})
-	//r.Method(http.MethodGet, "/faq", controllers.Static{Template: faqTpl})
-
-	r.Get("/", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "home.gohtml")))))
-	r.Get("/faq", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))))
-	r.Get("/contact", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "contact.gohtml")))))
-	r.Get("/login", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "login.gohtml")))))
+	r.Get("/", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "home.gohtml", "tailwind.gohtml"))))
+	r.Get("/faq", controllers.FAQ(views.Must(views.ParseFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))))
+	r.Get("/contact", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "contact.gohtml", "tailwind.gohtml"))))
+	r.Get("/login", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "login.gohtml"))))
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
