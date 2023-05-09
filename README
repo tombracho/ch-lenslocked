@@ -1,0 +1,2 @@
+#Connect to db psql inside the docker 
+docker compose exec -it db psql -U baloo -d lenslocked

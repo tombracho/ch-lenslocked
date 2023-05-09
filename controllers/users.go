@@ -3,12 +3,17 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/tombracho/ch-lenslocked/models"
 )
 
 type Users struct {
 	Templates struct {
-		New Template
+		New    Template
+		SignIn Template
 	}
+
+	UserService *models.UserService
 }
 
 func (u Users) New(w http.ResponseWriter, r *http.Request) {
@@ -20,13 +25,30 @@ func (u Users) New(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u Users) Create(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	username := r.FormValue("username")
+	user, err := u.UserService.Create(email, password, username)
 	if err != nil {
-		http.Error(w, "Unable to parse form submission.", http.StatusBadRequest)
+		fmt.Println(err)
+		http.Error(w, "Something went wrong.", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, "<p>The username: %s</p>", r.PostFormValue("username"))
-	fmt.Fprintf(w, "<p>The email: %s</p>", r.FormValue("email"))
-	fmt.Println(r.PostForm.Get("password"))
-	fmt.Fprintf(w, "<p>The passowrd: %s</p>", r.PostForm.Get("passowrd"))
+	fmt.Fprint(w, "User created: %+v", user)
+}
+
+func (u Users) SignInHandler(w http.ResponseWriter, r *http.Request) {
+	u.Templates.SignIn.Execute(w, nil)
+}
+
+func (u Users) SignIn(w http.ResponseWriter, r *http.Request) {
+	password := r.FormValue("password")
+	username := r.FormValue("username")
+	user, err := u.UserService.Authenticate(username, password)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Something went wrong.", http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprint(w, "User authenticated: %+v", user)
 }
