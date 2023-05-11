@@ -21,7 +21,7 @@ func (u Users) New(w http.ResponseWriter, r *http.Request) {
 		Email string
 	}
 	data.Email = r.FormValue("email")
-	u.Templates.New.Execute(w, data)
+	u.Templates.New.Execute(w, r, data)
 }
 
 func (u Users) Create(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +38,7 @@ func (u Users) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u Users) SignInHandler(w http.ResponseWriter, r *http.Request) {
-	u.Templates.SignIn.Execute(w, nil)
+	u.Templates.SignIn.Execute(w, r, nil)
 }
 
 func (u Users) SignIn(w http.ResponseWriter, r *http.Request) {
@@ -50,5 +50,23 @@ func (u Users) SignIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Something went wrong.", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprint(w, "User authenticated: %+v", user)
+
+	cookie := http.Cookie{
+		Name:     "username",
+		Value:    user.Username,
+		Path:     "/",
+		HttpOnly: true,
+	}
+	http.SetCookie(w, &cookie)
+	fmt.Fprint(w, "User account authenticated: %v", user)
+}
+
+func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
+	username, err := r.Cookie("username")
+	if err != nil {
+		http.Error(w, "The username cookie could not be read.", http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintf(w, "Username cookie: %s\n", username.Value)
+	fmt.Fprintf(w, "Headers: %+v\n", r.Header)
 }

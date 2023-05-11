@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/gorilla/csrf"
 	"github.com/tombracho/ch-lenslocked/controllers"
 	"github.com/tombracho/ch-lenslocked/models"
 	"github.com/tombracho/ch-lenslocked/templates"
@@ -34,23 +35,27 @@ func main() {
 	usersC := controllers.Users{
 		UserService: &userServices,
 	}
-	//var usersC controllers.Users
+
 	usersC.Templates.New = views.Must(views.ParseFS(templates.FS, "signup.gohtml", "tailwind.gohtml"))
 	r.Get("/signup", usersC.New)
 	r.Post("/signup", usersC.Create)
 
-	usersSignIn := controllers.Users{
-		UserService: &userServices,
-	}
-	//var usersSignIn controllers.Users
-	usersSignIn.Templates.SignIn = views.Must(views.ParseFS(templates.FS, "signin.gohtml", "tailwind.gohtml"))
-	r.Get("/signin", usersSignIn.SignInHandler)
-	r.Post("/signin", usersSignIn.SignIn)
+	usersC.Templates.SignIn = views.Must(views.ParseFS(templates.FS, "signin.gohtml", "tailwind.gohtml"))
+	r.Get("/signin", usersC.SignInHandler)
+	r.Post("/signin", usersC.SignIn)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
+	r.Get("/users/me", usersC.CurrentUser)
 
 	fmt.Println("Starting the server on :3000...")
-	http.ListenAndServe(":3000", r)
+
+	csrfKey := "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"
+	csrfMw := csrf.Protect(
+		[]byte(csrfKey),
+		//TODO: Fix this before deploying
+		csrf.Secure(false),
+	)
+	http.ListenAndServe(":3000", csrfMw(r))
 }
