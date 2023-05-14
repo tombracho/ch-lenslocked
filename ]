@@ -1,0 +1,5 @@
+package rand
+
+func Bytes(n int) ([]byte, error) {
+	b := make([]byte, n)
+}

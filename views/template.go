@@ -17,7 +17,7 @@ func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
 	tpl = tpl.Funcs(
 		template.FuncMap{
 			"csrfField": func() (template.HTML, error) {
-				return "", fmt.Errorf("csrfField not implemented")
+				return "csrfFunc placeholder", nil
 			},
 		},
 	)
@@ -37,7 +37,7 @@ type Template struct {
 func (t Template) Execute(w http.ResponseWriter, r *http.Request, data interface{}) {
 	tpl, err := t.htmlTpl.Clone()
 	if err != nil {
-		log.Printf("executing template: %v", err)
+		log.Printf("Clone template: %v", err)
 		http.Error(w, "There was an error executing the template", http.StatusInternalServerError)
 		return
 	}
@@ -50,7 +50,7 @@ func (t Template) Execute(w http.ResponseWriter, r *http.Request, data interface
 	)
 	w.Header().Set("Content-type", "text/html; charset=utf-8")
 	var buf bytes.Buffer
-	err = t.htmlTpl.Execute(&buf, data) //TODO Update this line
+	err = tpl.Execute(&buf, data) //TODO Update this line
 	if err != nil {
 		log.Printf("executing template: %v", err)
 		http.Error(w, "There was an error executing the template", http.StatusInternalServerError)

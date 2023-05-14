@@ -16,11 +16,12 @@ type User struct {
 	PasswordHash string
 }
 
-type NewUser struct {
-	Email        string
-	Username     string
-	PasswordHash string
-}
+//type NewUser struct {
+//	Email        string
+//	Username     string
+//	PasswordHash string
+//}
+
 type UserService struct {
 	DB *sql.DB
 }
