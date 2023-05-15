@@ -1,3 +1,5 @@
 lenslocked
 .git-push
 .main.go.swp
+*.swp
+*.swo

@@ -33,6 +33,7 @@ func main() {
 	}
 	sessionServices := models.SessionService{
 		DB: db,
+		//TM: &models.TokenManager{},
 	}
 
 	usersC := controllers.Users{
@@ -48,12 +49,14 @@ func main() {
 	r.Get("/signin", usersC.SignInHandler)
 	r.Post("/signin", usersC.SignIn)
 
+	usersC.Templates.CurrentUser = views.Must(views.ParseFS(templates.FS, "user.gohtml", "tailwind.gohtml"))
+	r.Get("/users/me", usersC.CurrentUser)
+
 	r.Post("/signout", usersC.SignOut)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
-	r.Get("/users/me", usersC.CurrentUser)
 
 	fmt.Println("Starting the server on :3000...")
 
