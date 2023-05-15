@@ -41,12 +41,16 @@ func main() {
 		SessionService: &sessionServices,
 	}
 
+	sm := controllers.SessionMiddleware{
+		User: &usersC,
+	}
+
 	usersC.Templates.New = views.Must(views.ParseFS(templates.FS, "signup.gohtml", "tailwind.gohtml"))
-	r.Get("/signup", usersC.New)
+	r.Get("/signup", sm.CheckSessionToken(usersC.New))
 	r.Post("/signup", usersC.Create)
 
 	usersC.Templates.SignIn = views.Must(views.ParseFS(templates.FS, "signin.gohtml", "tailwind.gohtml"))
-	r.Get("/signin", usersC.SignInHandler)
+	r.Get("/signin", sm.CheckSessionToken(usersC.SignInHandler))
 	r.Post("/signin", usersC.SignIn)
 
 	usersC.Templates.CurrentUser = views.Must(views.ParseFS(templates.FS, "user.gohtml", "tailwind.gohtml"))
