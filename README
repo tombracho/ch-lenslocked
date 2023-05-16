@@ -1,2 +1,12 @@
 #Connect to db psql inside the docker 
 docker compose exec -it db psql -U baloo -d lenslocked
+
+#For apply migration use tne next script from ./migrations/
+goose postgres \
+"host=localhost port=5432 user=baloo password=junglebook dbname=lenslocked sslmode=disable" \
+up
+
+#For rollback migrations use the next script from ./migrations/
+goose postgres \
+"host=localhost port=5432 user=baloo password=junglebook dbname=lenslocked sslmode=disable" \
+down

@@ -1,13 +1,27 @@
 package main
 
 import (
+	stdctx "context"
 	"fmt"
-	"math/rand"
+
+	"github.com/tombracho/ch-lenslocked/context"
+	"github.com/tombracho/ch-lenslocked/models"
+)
+
+type ctxKey string
+
+const (
+	favoriteColorKey ctxKey = "favorite-color"
 )
 
 func main() {
-	rand.Seed(123)
-	fmt.Println(rand.Intn(100))
-	fmt.Println(rand.Intn(100))
-	fmt.Println(rand.Intn(100))
+	ctx := stdctx.Background()
+
+	user := models.User{
+		Email: "artyomsonyx@gmail.com",
+	}
+	ctx = context.WithUser(ctx, &user)
+
+	retrievedUser := context.User(ctx)
+	fmt.Println(retrievedUser.Email)
 }

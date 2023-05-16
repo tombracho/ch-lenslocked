@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/csrf"
 	"github.com/tombracho/ch-lenslocked/controllers"
+	"github.com/tombracho/ch-lenslocked/migrations"
 	"github.com/tombracho/ch-lenslocked/models"
 	"github.com/tombracho/ch-lenslocked/templates"
 	"github.com/tombracho/ch-lenslocked/views"
@@ -21,11 +22,17 @@ func main() {
 
 	//setup a database connection
 	cfg := models.DefaultPostgresConfig()
+	fmt.Println(cfg.String())
 	db, err := models.Open(cfg)
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
+
+	err = models.MigrateFS(db, migrations.FS, ".")
+	if err != nil {
+		panic(err)
+	}
 
 	//setup our model services
 	userServices := models.UserService{
