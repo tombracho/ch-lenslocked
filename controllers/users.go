@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/tombracho/ch-lenslocked/context"
 	"github.com/tombracho/ch-lenslocked/models"
 )
 
@@ -71,20 +72,7 @@ func (u Users) SignIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
-	token, err := readCookie(r, CookieSession)
-	if err != nil {
-		fmt.Println(err)
-		deleteCookie(w, CookieSession)
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
-	user, err := u.SessionService.User(token)
-	if err != nil {
-		fmt.Println(err)
-		deleteCookie(w, CookieSession)
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
+	user := context.User(r.Context())
 	u.Templates.CurrentUser.Execute(w, r, user)
 }
 
