@@ -13,6 +13,13 @@ import (
 	"github.com/tombracho/ch-lenslocked/views"
 )
 
+const (
+	host     = "sandbox.smtp.mailtrap.io"
+	port     = 2525
+	username = "2bffcb431ac475"
+	passwrd  = "01ab3e159d8d53"
+)
+
 func main() {
 	//setup a database connection
 	cfg := models.DefaultPostgresConfig()
@@ -45,6 +52,7 @@ func main() {
 	csrfKey := "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"
 	csrfMw := csrf.Protect(
 		[]byte(csrfKey),
+		csrf.Path("/"),
 		//TODO: Fix this before deploying
 		csrf.Secure(false),
 	)
@@ -80,7 +88,7 @@ func main() {
 		r.Get("/", usersC.CurrentUser)
 	})
 
-	r.Post("/signout", usersC.SignOut)
+	r.Get("/signout", usersC.SignOut)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)

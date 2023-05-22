@@ -1,27 +1,30 @@
 package main
 
-import (
-	stdctx "context"
-	"fmt"
-
-	"github.com/tombracho/ch-lenslocked/context"
-	"github.com/tombracho/ch-lenslocked/models"
-)
-
-type ctxKey string
+import "github.com/tombracho/ch-lenslocked/models"
 
 const (
-	favoriteColorKey ctxKey = "favorite-color"
+	host     = "sandbox.smtp.mailtrap.io"
+	port     = 2525
+	username = "2bffcb431ac475"
+	passwrd  = "01ab3e159d8d53"
 )
 
 func main() {
-	ctx := stdctx.Background()
-
-	user := models.User{
-		Email: "artyomsonyx@gmail.com",
+	email := models.Email{
+		From:      "from@example.com",
+		To:        "artyomsonyx@gmail.com",
+		Subject:   "Test mail",
+		Plaintext: "Body of the mail",
+		HTML:      `<h1>Hello there buddy!</h1><p>This is the email</p><p>Hope you enjoy it</p>`,
 	}
-	ctx = context.WithUser(ctx, &user)
 
-	retrievedUser := context.User(ctx)
-	fmt.Println(retrievedUser.Email)
+	es := models.NewEmailService(models.SMTPConfig{
+		Host:     host,
+		Port:     port,
+		Username: username,
+		Password: passwrd,
+	})
+
+	es.Send(email)
+
 }

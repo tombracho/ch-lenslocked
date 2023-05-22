@@ -1,9 +1,4 @@
 {{template "header" .}}
-  <form action="/signin" method="post" enctype="multipart/form-data">
-		<div class="hidden">
-		    {{csrfField}}
-	        </div>
-  </form>
   <div class="max-w-md mx-auto mt-8 bg-white p-8 rounded shadow-md">
     <h1 class="text-2xl font-bold mb-6">Welcome, {{.Username}}</h1>
     <p class="mb-4">ID: {{.ID}}</p>
